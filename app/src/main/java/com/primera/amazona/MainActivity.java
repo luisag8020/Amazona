@@ -63,6 +63,16 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         ApiClient.connect();
 
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    12345
+            );
+        }
+
+
         // Record button
         //Button recBtn = (Button) findViewById(R.id.RecordButton);
 //        recBtn.setOnClickListener(new View.OnClickListener(){
@@ -181,13 +191,13 @@ public class MainActivity extends AppCompatActivity {
             });
 
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    12345
-            );
-        }
+//        if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this,
+//                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                    12345
+//            );
+//        }
 
         // hasAccuracy()      hasAltitude()    getProvider()
         // set(Location l)

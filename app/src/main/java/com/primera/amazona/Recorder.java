@@ -5,11 +5,16 @@ package com.primera.amazona;
  */
 
 import java.io.IOException;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -32,6 +37,19 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
+
+        if (ContextCompat.checkSelfPermission(Recorder.this, Manifest.permission.CAMERA) +
+                ContextCompat.checkSelfPermission(Recorder.this, Manifest.permission.RECORD_AUDIO) +
+                ContextCompat.checkSelfPermission(Recorder.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Recorder.this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    12345
+            );
+        }
+
+
 
         // we shall take the video in landscape orientation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
