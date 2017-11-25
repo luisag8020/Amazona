@@ -1,5 +1,6 @@
 package com.primera.amazona;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
@@ -64,22 +65,18 @@ public class MainActivity extends AppCompatActivity {
         ApiClient.connect();
 
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) +
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) +
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) +
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     12345
             );
         }
 
-
-        // Record button
-        //Button recBtn = (Button) findViewById(R.id.RecordButton);
-//        recBtn.setOnClickListener(new View.OnClickListener(){
-//            public void onClick(View v) {
-//
-//            }
-//        });
 
         // Update button
         Button updateBtn = (Button)findViewById(R.id.UpdateButton);
@@ -100,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent (this, Recorder.class);
         startActivity(intent);
     }
+
 
     @Override
     public void onDestroy() {
@@ -201,52 +199,64 @@ public class MainActivity extends AppCompatActivity {
 
         // hasAccuracy()      hasAltitude()    getProvider()
         // set(Location l)
-        Awareness.SnapshotApi.getLocation(ApiClient)
-            .setResultCallback(new ResultCallback<LocationResult>() {
-                @Override
-                public void onResult(@NonNull LocationResult locationResult) {
-                    TextView locationText=(TextView)findViewById(R.id.locationText);
 
-                    if (!locationResult.getStatus().isSuccess()) {
-                        String location = "Could not get location.";
-                        Log.e(TAG, "Could not get location.");
-                        locationText.setText(location);
-                        return;
-                    }
-                    Location location = locationResult.getLocation();
-                    String locString = "Location: " +
-                            " \nCapture Time: " + location.getTime() +
-                            " \nLat: " + location.getLatitude() +
-                            " \nLon: " + location.getLongitude() +
-                            " \nAlt: " + location.getAltitude() +
-                            " \nAccuracy: " +location.getAccuracy();
-                    locationText.setText(locString);
-                    Log.i(TAG, "Time:" + location.getTime()); // UTC time
-                    Log.i(TAG, "Accuracy:" + location.getAccuracy());
-                    Log.i(TAG, "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude() + ", Alt: " + location.getAltitude());
-                }
-            });
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+                Awareness.SnapshotApi.getLocation(ApiClient)
+                    .setResultCallback(new ResultCallback<LocationResult>() {
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onResult(@NonNull LocationResult locationResult) {
+                            TextView locationText = (TextView) findViewById(R.id.locationText);
 
 
-        Awareness.SnapshotApi.getWeather(ApiClient)
-            .setResultCallback(new ResultCallback<WeatherResult>() {
-                @Override
-                public void onResult(@NonNull WeatherResult weatherResult) {
-                    TextView weatherText=(TextView)findViewById(R.id.weatherText);
-                    if (!weatherResult.getStatus().isSuccess()) {
-                        String weatherString = "Could not get weather.";
-                        Log.e(TAG, "Could not get weather.");
-                        weatherText.setText(weatherString);
-                        return;
-                    }
-                    Weather weather = weatherResult.getWeather();
-                    String weatherString = "Weather: " + weather.getTemperature(FAHRENHEIT);
-                    weatherText.setText(weatherString);
-                    Log.i(TAG, "Weather Conditions:" + Arrays.toString(weather.getConditions()));
-                    Log.i(TAG, "Weather Temperature:" + weather.getTemperature(FAHRENHEIT));
-                    Log.i(TAG, "Weather: " + weather);
-                }
-            });
+                            if (!locationResult.getStatus().isSuccess()) {
+                                String location = "Could not get location.";
+                                Log.e(TAG, "Could not get location.");
+                                locationText.setText(location);
+                                return;
+                            }
+                            Location location = locationResult.getLocation();
+                            String locString = "Location: " +
+                                    " \nCapture Time: " + location.getTime() +
+                                    " \nLat: " + location.getLatitude() +
+                                    " \nLon: " + location.getLongitude() +
+                                    " \nAlt: " + location.getAltitude() +
+                                    " \nAccuracy: " + location.getAccuracy();
+                            locationText.setText(locString);
+                            Log.i(TAG, "Time:" + location.getTime()); // UTC time
+                            Log.i(TAG, "Accuracy:" + location.getAccuracy());
+                            Log.i(TAG, "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude() + ", Alt: " + location.getAltitude());
+                        }
+                    });
+
+
+                Awareness.SnapshotApi.getWeather(ApiClient)
+                    .setResultCallback(new ResultCallback<WeatherResult>() {
+                        @Override
+                        public void onResult(@NonNull WeatherResult weatherResult) {
+                            TextView weatherText = (TextView) findViewById(R.id.weatherText);
+                            if (!weatherResult.getStatus().isSuccess()) {
+                                String weatherString = "Could not get weather.";
+                                Log.e(TAG, "Could not get weather.");
+                                weatherText.setText(weatherString);
+                                return;
+                            }
+                            Weather weather = weatherResult.getWeather();
+                            String weatherString = "Weather: " + weather.getTemperature(FAHRENHEIT);
+                            weatherText.setText(weatherString);
+                            Log.i(TAG, "Weather Conditions:" + Arrays.toString(weather.getConditions()));
+                            Log.i(TAG, "Weather Temperature:" + weather.getTemperature(FAHRENHEIT));
+                            Log.i(TAG, "Weather: " + weather);
+                        }
+                    });
+        }
+        else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        12345
+                );
+        }
 
 
         // get access to camera

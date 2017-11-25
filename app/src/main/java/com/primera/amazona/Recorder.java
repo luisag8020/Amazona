@@ -50,10 +50,6 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
         }
 
 
-
-        // we shall take the video in landscape orientation
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
@@ -100,10 +96,13 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
         mMediaRecorder.setPreviewDisplay(surface);
         mMediaRecorder.setCamera(mCamera);
 
-        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         //       mMediaRecorder.setOutputFormat(8);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+
         mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(640, 480);
