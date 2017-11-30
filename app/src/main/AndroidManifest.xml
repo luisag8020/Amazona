@@ -20,18 +20,19 @@
 
         <activity android:name=".Recorder">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SHOW_APP_INFO" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".EmergencyContacts">
+        <activity android:name=".EmergencyContacts" android:label="Emergency Contacts">
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <!--<service android:name=".ActivityRecognizedService" /> -->
 
