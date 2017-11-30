@@ -98,12 +98,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // Unregisters BroadcastReceiver when app is destroyed.
+    public void emergencyContacts (View view) {
+        Intent intent = new Intent (this, EmergencyContacts.class);
+        startActivity(intent);
     }
+
 
     // For power button
     public class Receiver extends BroadcastReceiver {
@@ -259,8 +258,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // get access to camera
-
         // get network status
         boolean connected = false;
         TextView connectText=(TextView)findViewById(R.id.connectText);
@@ -293,9 +290,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String networkType() {
-        TelephonyManager teleMan = (TelephonyManager)
-                getSystemService(Context.TELEPHONY_SERVICE);
-        int networkType = teleMan.getNetworkType();
+        TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = tManager.getNetworkType();
         switch (networkType) {
             // 2G
             case TelephonyManager.NETWORK_TYPE_GPRS: return "GPRS";
@@ -327,20 +323,4 @@ public class MainActivity extends AppCompatActivity {
         throw new RuntimeException("New type of network");
     }
 
-
-
-    /*public class ActivityRecognizedService extends IntentService {
-
-        public ActivityRecognizedService() {
-            super("ActivityRecognizedService");
-        }
-
-        public ActivityRecognizedService(String name) {
-            super(name);
-        }
-
-        @Override
-        protected void onHandleIntent(Intent intent) {
-        }
-    }*/
 }
