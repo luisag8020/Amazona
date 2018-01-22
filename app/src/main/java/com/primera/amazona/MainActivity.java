@@ -2,7 +2,6 @@ package com.primera.amazona;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,14 +13,14 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -33,17 +32,20 @@ import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.HeadphoneState;
 import com.google.android.gms.awareness.state.Weather;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.snapshot.DetectedActivityResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.util.Arrays;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 import static com.google.android.gms.awareness.state.Weather.FAHRENHEIT;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +53,26 @@ public class MainActivity extends AppCompatActivity {
     private GoogleApiClient ApiClient;
     private static final String TAG = "Awareness";
     //public final static int REQUEST_CODE = 10101;
+
+    // Firebase
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference batteryStrRef;
+    DatabaseReference longStrRef;
+    DatabaseReference latStrRef;
+    DatabaseReference altStrRef;
+    DatabaseReference accStrRef;
+    DatabaseReference captureTimeStrRef;
+    DatabaseReference weatherStrRef;
+
+
+
+
+    // Network Signal
+    int mSignalStrength = 0;
+    String testing = "";
+    TelephonyManager mTelephonyManager;
+    MyPhoneStateListener mPhoneStatelistener;
+
 
 
     @Override
@@ -63,19 +85,29 @@ public class MainActivity extends AppCompatActivity {
                 .addApi(Awareness.API)
                 .build();
         ApiClient.connect();
-
-
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) +
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     12345
             );
         }
+
+        // Firebase reference
+        //mStorageRef = FirebaseStorage.getInstance().getReference();
+        batteryStrRef = database.getReference("battery");
+        longStrRef = database.getReference("longitude");
+        latStrRef = database.getReference("latitude");
+        altStrRef = database.getReference("altitude");
+        accStrRef = database.getReference("accuracy");
+        captureTimeStrRef = database.getReference("location Time");
+        weatherStrRef = database.getReference("weather");
+
 
 
         // Update button
@@ -91,15 +123,40 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter screenStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         screenStateFilter.addAction(Intent.ACTION_SCREEN_OFF); // TO-DO: Add multiple presses
         registerReceiver(powerBroadCastReceiver, screenStateFilter);
+
+        // Network strength
+        mPhoneStatelistener = new MyPhoneStateListener();
+        mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+
     }
 
+    // Obtains and prints all background information about the user
+    @TargetApi(23)
+    private void initSnapshots() {
+
+        battery();
+        getActivity();
+        getLocation();     // Get location and weather
+        getNetwork();
+
+    }
+
+    // Goes to record page upon button press
     public void recordVideo (View view) {
         Intent intent = new Intent (this, Recorder.class);
         startActivity(intent);
     }
 
+    // Goes to emergency contact page upon button press
     public void emergencyContacts (View view) {
         Intent intent = new Intent (this, EmergencyContacts.class);
+        startActivity(intent);
+    }
+
+    // Goes to settings page upon button press
+    public void settings (View view) {
+        Intent intent = new Intent (this, SettingsActivity.class);
         startActivity(intent);
     }
 
@@ -121,8 +178,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initSnapshots() {
 
+    // Battery level
+    private void battery() {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = registerReceiver(null, ifilter);
 
@@ -134,130 +192,108 @@ public class MainActivity extends AppCompatActivity {
         String battery = String.valueOf(batteryPct);
         Log.i(TAG, "Battery: " + batteryPct);
         batteryText.setText("Battery: " + battery);
+        batteryStrRef.setValue(battery);
+    }
 
-
-        // Detect user's activity
+    // Detect user's activity
+    private void getActivity() {
         Awareness.SnapshotApi.getDetectedActivity(ApiClient)
-        .setResultCallback(new ResultCallback<DetectedActivityResult>() {
-            @Override
-            public void onResult(@NonNull DetectedActivityResult detectedActivityResult) {
-                TextView activityText=(TextView)findViewById(R.id.activityText);
+                .setResultCallback(new ResultCallback<DetectedActivityResult>() {
+                    @Override
+                    public void onResult(@NonNull DetectedActivityResult detectedActivityResult) {
+                        TextView activityText=(TextView)findViewById(R.id.activityText);
 
-            if (!detectedActivityResult.getStatus().isSuccess()) {
-                String activity = "Could not get the current activity.";
-                Log.e(TAG, "Could not get the current activity.");
-                activityText.setText(activity);
-                return;
-            }
-            ActivityRecognitionResult aResult = detectedActivityResult.getActivityRecognitionResult();
-            DetectedActivity probableActivity = aResult.getMostProbableActivity();
+                        if (!detectedActivityResult.getStatus().isSuccess()) {
+                            String activity = "Could not get the current activity.";
+                            Log.e(TAG, "Could not get the current activity.");
+                            activityText.setText(activity);
+                            return;
+                        }
+                        ActivityRecognitionResult aResult = detectedActivityResult.getActivityRecognitionResult();
+                        DetectedActivity probableActivity = aResult.getMostProbableActivity();
 
-            String testing = probableActivity.toString();
-                    //toString() + "Type: " + String.valueOf(probableActivity.getType());
-            Log.i(TAG, probableActivity.toString() + " " + String.valueOf(probableActivity.getType()));
-            activityText.setText(testing);
-            }
-        });
+                        String testing = probableActivity.toString();
+                        //toString() + "Type: " + String.valueOf(probableActivity.getType());
+                        Log.i(TAG, probableActivity.toString() + " " + String.valueOf(probableActivity.getType()));
+                        activityText.setText(testing);
+                    }
+                });
 
-        // Check if headphones are plugged in
-        Awareness.SnapshotApi.getHeadphoneState(ApiClient)
-            .setResultCallback(new ResultCallback<HeadphoneStateResult>() {
+    }
+
+    // Get location and weather
+    private void getLocation() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Awareness.SnapshotApi.getLocation(ApiClient).setResultCallback(new ResultCallback<LocationResult>() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
-                public void onResult(@NonNull HeadphoneStateResult headphoneStateResult) {
-                    TextView headphoneText=(TextView)findViewById(R.id.headphoneText);
+                public void onResult(@NonNull LocationResult locationResult) {
+                    TextView locationText = (TextView) findViewById(R.id.locationText);
 
-                    if (!headphoneStateResult.getStatus().isSuccess()) {
-                        String headphoneString = "Could not get headphone state.";
-                        Log.e(TAG, "Could not get headphone state.");
-                        headphoneText.setText(headphoneString);
+                    if (!locationResult.getStatus().isSuccess()) {
+                        String location = "Could not get location.";
+                        Log.e(TAG, "Could not get location.");
+                        locationText.setText(location);
+                        longStrRef.setValue(location);
+                        latStrRef.setValue(location);
 
                         return;
                     }
-                    HeadphoneState headphoneState = headphoneStateResult.getHeadphoneState();
-                    if (headphoneState.getState() == HeadphoneState.PLUGGED_IN) {
-                        String headphoneString = "Headphones are plugged in";
-                        Log.i(TAG, "Headphones are plugged in.\n");
-                        headphoneText.setText(headphoneString);
-                    } else {
-                        // HeadphoneState.UNPLUGGED
-                        String headphoneString = "Headphones are NOT plugged in";
-                        Log.i(TAG, "Headphones are NOT plugged in.\n");
-                        headphoneText.setText(headphoneString);
-                    }
+
+                    Location location = locationResult.getLocation();
+                    String locString = "Location: " +
+                            " \nCapture Time: " + location.getTime() +
+                            " \nLat: " + location.getLatitude() +
+                            " \nLon: " + location.getLongitude() +
+                            " \nAlt: " + location.getAltitude() +
+                            " \nAccuracy: " + location.getAccuracy();
+                    locationText.setText(locString);
+                    latStrRef.setValue(location.getLatitude());
+                    longStrRef.setValue(location.getLongitude());
+                    altStrRef.setValue(location.getAltitude());
+                    accStrRef.setValue(location.getAccuracy());
+                    captureTimeStrRef.setValue(location.getTime());
+
+
+                    Log.i(TAG, "Time:" + location.getTime()); // UTC time
+                    Log.i(TAG, "Accuracy:" + location.getAccuracy());
+                    Log.i(TAG, "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude() + ", Alt: " + location.getAltitude());
                 }
             });
-
-
-//        if (ContextCompat.checkSelfPermission(MainActivity.this,
-//                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(MainActivity.this,
-//                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                    12345
-//            );
-//        }
-
-        // hasAccuracy()      hasAltitude()    getProvider()
-        // set(Location l)
-
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
-                Awareness.SnapshotApi.getLocation(ApiClient)
-                    .setResultCallback(new ResultCallback<LocationResult>() {
-                        @RequiresApi(api = Build.VERSION_CODES.M)
-                        @Override
-                        public void onResult(@NonNull LocationResult locationResult) {
-                            TextView locationText = (TextView) findViewById(R.id.locationText);
-
-
-                            if (!locationResult.getStatus().isSuccess()) {
-                                String location = "Could not get location.";
-                                Log.e(TAG, "Could not get location.");
-                                locationText.setText(location);
-                                return;
-                            }
-                            Location location = locationResult.getLocation();
-                            String locString = "Location: " +
-                                    " \nCapture Time: " + location.getTime() +
-                                    " \nLat: " + location.getLatitude() +
-                                    " \nLon: " + location.getLongitude() +
-                                    " \nAlt: " + location.getAltitude() +
-                                    " \nAccuracy: " + location.getAccuracy();
-                            locationText.setText(locString);
-                            Log.i(TAG, "Time:" + location.getTime()); // UTC time
-                            Log.i(TAG, "Accuracy:" + location.getAccuracy());
-                            Log.i(TAG, "Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude() + ", Alt: " + location.getAltitude());
-                        }
-                    });
-
-
-                Awareness.SnapshotApi.getWeather(ApiClient)
-                    .setResultCallback(new ResultCallback<WeatherResult>() {
-                        @Override
-                        public void onResult(@NonNull WeatherResult weatherResult) {
-                            TextView weatherText = (TextView) findViewById(R.id.weatherText);
-                            if (!weatherResult.getStatus().isSuccess()) {
-                                String weatherString = "Could not get weather.";
-                                Log.e(TAG, "Could not get weather.");
-                                weatherText.setText(weatherString);
-                                return;
-                            }
-                            Weather weather = weatherResult.getWeather();
-                            String weatherString = "Weather: " + weather.getTemperature(FAHRENHEIT);
-                            weatherText.setText(weatherString);
-                            Log.i(TAG, "Weather Conditions:" + Arrays.toString(weather.getConditions()));
-                            Log.i(TAG, "Weather Temperature:" + weather.getTemperature(FAHRENHEIT));
-                            Log.i(TAG, "Weather: " + weather);
-                        }
-                    });
         }
         else {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        12345
-                );
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    12345
+            );
         }
 
+        Awareness.SnapshotApi.getWeather(ApiClient).setResultCallback(new ResultCallback<WeatherResult>() {
+            @Override
+            public void onResult(@NonNull WeatherResult weatherResult) {
+                TextView weatherText = (TextView) findViewById(R.id.weatherText);
+                if (!weatherResult.getStatus().isSuccess()) {
+                    String weatherString = "Could not get weather.";
+                    Log.e(TAG, "Could not get weather.");
+                    weatherText.setText(weatherString);
+                    weatherStrRef.setValue(weatherString);
+                    return;
+                }
 
+                Weather weather = weatherResult.getWeather();
+                String weatherString = "Weather: " + weather.getTemperature(FAHRENHEIT);
+                weatherText.setText(weatherString);
+                weatherStrRef.setValue(weatherString);
+                Log.i(TAG, "Weather Conditions:" + Arrays.toString(weather.getConditions()));
+                Log.i(TAG, "Weather Temperature:" + weather.getTemperature(FAHRENHEIT));
+                Log.i(TAG, "Weather: " + weather);
+            }
+        });
+
+    }
+
+    // Obtains type and strength of network and prints it
+    private void getNetwork() {
         // get network status
         boolean connected = false;
         TextView connectText=(TextView)findViewById(R.id.connectText);
@@ -282,16 +318,61 @@ public class MainActivity extends AppCompatActivity {
         // Specific network type
         if (connected == true) {
             TextView networkText=(TextView)findViewById(R.id.networkText);
-            String networkType = "Network Type: " + networkType();
+            String networkType = "Network Type: " + networkType() + "\nStrength: " + mSignalStrength + "\nTesting: " + testing;
             networkText.setText(networkType);
             Log.i(TAG, "network type: " + networkType);
         }
 
     }
 
+    // Detect if headphones are pluged in
+    private void getHeadphones() {
+        // Check if headphones are plugged in
+        Awareness.SnapshotApi.getHeadphoneState(ApiClient)
+                .setResultCallback(new ResultCallback<HeadphoneStateResult>() {
+                    @Override
+                    public void onResult(@NonNull HeadphoneStateResult headphoneStateResult) {
+                        TextView headphoneText=(TextView)findViewById(R.id.headphoneText);
+
+                        if (!headphoneStateResult.getStatus().isSuccess()) {
+                            String headphoneString = "Could not get headphone state.";
+                            Log.e(TAG, "Could not get headphone state.");
+                            headphoneText.setText(headphoneString);
+
+                            return;
+                        }
+                        HeadphoneState headphoneState = headphoneStateResult.getHeadphoneState();
+                        if (headphoneState.getState() == HeadphoneState.PLUGGED_IN) {
+                            String headphoneString = "Headphones are plugged in";
+                            Log.i(TAG, "Headphones are plugged in.\n");
+                            headphoneText.setText(headphoneString);
+                        } else {
+                            // HeadphoneState.UNPLUGGED
+                            String headphoneString = "Headphones are NOT plugged in";
+                            Log.i(TAG, "Headphones are NOT plugged in.\n");
+                            headphoneText.setText(headphoneString);
+                        }
+                    }
+                });
+    }
+
+    // Helper method for signal strength of network
+    private class MyPhoneStateListener extends PhoneStateListener {
+
+        @Override
+        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+            super.onSignalStrengthsChanged(signalStrength);
+            testing = signalStrength.toString();
+            mSignalStrength = signalStrength.getGsmSignalStrength();
+            mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
+        }
+    }
+
+    // Helper method for network
     private String networkType() {
         TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = tManager.getNetworkType();
+
         switch (networkType) {
             // 2G
             case TelephonyManager.NETWORK_TYPE_GPRS: return "GPRS";

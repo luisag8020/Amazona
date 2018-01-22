@@ -60,6 +60,7 @@ public class EmergencyContacts extends AppCompatActivity {
 
     //Query the Uri and read contact details. Handle the picked contact data.
     private void contactPicked(Intent data) {
+
         Cursor cursor = null;
         try {
             String phoneNo = null ;
@@ -84,14 +85,10 @@ public class EmergencyContacts extends AppCompatActivity {
         }
     }
 
-    // Goes back to main page
+    // Back button
     public void back_Main (View view) {
         Intent intent = new Intent (this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void settings (View view) {
-        Intent intent = new Intent (this, MainActivity.class);
-        startActivity(intent);
-    }
 }

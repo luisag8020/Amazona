@@ -33,6 +33,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsActivity" android:label="Settings">
+
+            <intent-filter>
+                <action android:name="android.intent.action.QUICK_VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <!--<service android:name=".ActivityRecognizedService" /> -->
 
@@ -55,7 +63,9 @@
     <!--For getDetectedActivity(), DetectedActivityFence-->
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
     <!--getBeaconState(), getLocation(), getPlaces(), getWeather(), BeaconFence, LocationFence-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera2.autofocus" />
