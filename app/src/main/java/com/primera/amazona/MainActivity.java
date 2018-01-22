@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Network Signal
     int mSignalStrength = 0;
-    String testing = "";
+    String strengthString = "";
+    int strLevel = 0;
     TelephonyManager mTelephonyManager;
     MyPhoneStateListener mPhoneStatelistener;
 
@@ -101,11 +102,11 @@ public class MainActivity extends AppCompatActivity {
         // Firebase reference
         //mStorageRef = FirebaseStorage.getInstance().getReference();
         batteryStrRef = database.getReference("battery");
-        longStrRef = database.getReference("longitude");
-        latStrRef = database.getReference("latitude");
-        altStrRef = database.getReference("altitude");
-        accStrRef = database.getReference("accuracy");
-        captureTimeStrRef = database.getReference("location Time");
+        longStrRef = database.getReference("location").child("longitude");
+        latStrRef = database.getReference("location").child("latitude");
+        altStrRef = database.getReference("location").child("altitude");
+        accStrRef = database.getReference("location").child("accuracy");
+        captureTimeStrRef = database.getReference("location").child("location Time");
         weatherStrRef = database.getReference("weather");
 
 
@@ -318,7 +319,10 @@ public class MainActivity extends AppCompatActivity {
         // Specific network type
         if (connected == true) {
             TextView networkText=(TextView)findViewById(R.id.networkText);
-            String networkType = "Network Type: " + networkType() + "\nStrength: " + mSignalStrength + "\nTesting: " + testing;
+            String networkType = "Network Type: " + networkType() +
+                    "\n Strength Level: " + strLevel +
+                    "\n Strength: " + mSignalStrength +
+                    "\n String:  " + strengthString;
             networkText.setText(networkType);
             Log.i(TAG, "network type: " + networkType);
         }
@@ -356,15 +360,18 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+
     // Helper method for signal strength of network
+    @TargetApi(23)
     private class MyPhoneStateListener extends PhoneStateListener {
 
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-            testing = signalStrength.toString();
+            strengthString = signalStrength.toString();
             mSignalStrength = signalStrength.getGsmSignalStrength();
-            mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
+            //mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
+            strLevel = signalStrength.getLevel(); // 0 -> lowest
         }
     }
 
