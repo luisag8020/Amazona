@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/numbering"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.050"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.30">
+
+        <TextView
+            android:id="@+id/number1"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:layout_weight="1"
+            android:text="1"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/number2"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:layout_weight="1"
+            android:text="2"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/number3"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:layout_weight="1"
+            android:text="3"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/number4"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:layout_weight="1"
+            android:text="4"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/number5"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:layout_weight="1"
+            android:text="5"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/contactInfoLinearLayout"
+        android:layout_width="251dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintLeft_toRightOf="@id/numbering"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.304">
+
+        <LinearLayout
+            android:id="@+id/contactInfo1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintLeft_toRightOf="@id/numbering"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/numbering"
+            app:layout_constraintVertical_bias="0.279">
+
+            <TextView
+                android:id="@+id/nameResult1"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/numberResult1"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.161"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameResult"
+                app:layout_constraintVertical_bias="0.07" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contactInfo2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintLeft_toRightOf="@id/numbering"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/numbering"
+            app:layout_constraintVertical_bias="0.279">
+
+            <TextView
+                android:id="@+id/nameResult2"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/numberResult2"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.161"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameResult"
+                app:layout_constraintVertical_bias="0.07" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contactInfo3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintLeft_toRightOf="@id/numbering"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/numbering"
+            app:layout_constraintVertical_bias="0.279">
+
+            <TextView
+                android:id="@+id/nameResult3"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/numberResult3"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.161"
+                app:layout_constraintLeft_toRightOf="@+id/contact1"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameResult"
+                app:layout_constraintVertical_bias="0.07" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/contactInfo4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintLeft_toRightOf="@id/numbering"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/numbering"
+            app:layout_constraintVertical_bias="0.279">
+
+            <TextView
+                android:id="@+id/nameResult4"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/numberResult4"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.161"
+                app:layout_constraintLeft_toRightOf="@+id/contact1"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameResult"
+                app:layout_constraintVertical_bias="0.07" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/contactInfo5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintLeft_toRightOf="@id/numbering"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/numbering"
+            app:layout_constraintVertical_bias="0.279">
+
+            <TextView
+                android:id="@+id/nameResult5"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/numberResult5"
+                android:layout_width="280dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.161"
+                app:layout_constraintLeft_toRightOf="@+id/contact1"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameResult"
+                app:layout_constraintVertical_bias="0.07" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/Back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="back_Main"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965" />
+
+
+    <!-- ADD CONTACT BUTTONS -->
+    <LinearLayout
+        android:id="@+id/addContactButtons"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/DeleteButtons"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.304">
+
+        <Button
+            android:id="@+id/searchCont1"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="pickContact1"
+            android:text="+"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+
+        <Button
+            android:id="@+id/searchCont2"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="pickContact2"
+            android:text="+"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/searchCont3"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:onClick="pickContact3"
+            android:text="+"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/searchCont4"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="pickContact4"
+            android:text="+"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/searchCont5"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="pickContact5"
+            android:text="+"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+    </LinearLayout>
+
+
+    <!-- ADD DELETE BUTTONS -->
+    <LinearLayout
+        android:id="@+id/DeleteButtons"
+        android:layout_width="27dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.304">
+
+        <Button
+            android:id="@+id/-1"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="deleteContact1"
+            android:text="-"
+
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+
+        <Button
+            android:id="@+id/-2"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="deleteContact2"
+            android:text="-"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/-3"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="deleteContact3"
+            android:text="-"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/-4"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="deleteContact4"
+            android:text="-"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+        <Button
+            android:id="@+id/-5"
+            android:layout_width="30dp"
+            android:layout_height="68dp"
+            android:onClick="deleteContact5"
+            android:text="-"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.511"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.678" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
