@@ -19,13 +19,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellInfoLte;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.CellSignalStrengthLte;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.awareness.snapshot.HeadphoneStateResult;
 import com.google.android.gms.awareness.snapshot.LocationResult;
@@ -39,8 +46,11 @@ import com.google.android.gms.awareness.snapshot.DetectedActivityResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -52,7 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
     private GoogleApiClient ApiClient;
     private static final String TAG = "Awareness";
-    //public final static int REQUEST_CODE = 10101;
+
+
+    // Local copy
+    String contactNameArray[] = new String[5];   // gets Name array and number from internet
+    String contactNumberArray[] = new String[5]; // FUTURE: get it locally from EmergencyContacts.java
+    String longitudeHistory[] = new String[1];
+    String latitudeHistory[] = new String[1];
 
     // Firebase
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -64,7 +80,17 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference captureTimeStrRef;
     DatabaseReference weatherStrRef;
 
-
+    // Contact info
+    DatabaseReference contactName1;
+    DatabaseReference contactName2;
+    DatabaseReference contactName3;
+    DatabaseReference contactName4;
+    DatabaseReference contactName5;
+    DatabaseReference contactNo1;
+    DatabaseReference contactNo2;
+    DatabaseReference contactNo3;
+    DatabaseReference contactNo4;
+    DatabaseReference contactNo5;
 
 
     // Network Signal
@@ -75,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     MyPhoneStateListener mPhoneStatelistener;
 
 
-
+    @TargetApi(17)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,11 +116,13 @@ public class MainActivity extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) +
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) +
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.SEND_SMS},
                     12345
             );
         }
@@ -109,7 +137,18 @@ public class MainActivity extends AppCompatActivity {
         captureTimeStrRef = database.getReference("location").child("location Time");
         weatherStrRef = database.getReference("weather");
 
+        contactName1 = database.getReference("allContacts").child("contactName1");
+        contactName2 = database.getReference("allContacts").child("contactName2");
+        contactName3 = database.getReference("allContacts").child("contactName3");
+        contactName4 = database.getReference("allContacts").child("contactName4");
+        contactName5 = database.getReference("allContacts").child("contactName5");
+        contactNo1 = database.getReference("allContacts").child("contactNo1");
+        contactNo2 = database.getReference("allContacts").child("contactNo2");
+        contactNo3 = database.getReference("allContacts").child("contactNo3");
+        contactNo4 = database.getReference("allContacts").child("contactNo4");
+        contactNo5 = database.getReference("allContacts").child("contactNo5");
 
+        populateLocalCopyContacts();
 
         // Update button
         Button updateBtn = (Button)findViewById(R.id.UpdateButton);
@@ -129,6 +168,34 @@ public class MainActivity extends AppCompatActivity {
         mPhoneStatelistener = new MyPhoneStateListener();
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+
+
+        // Send message
+        Button buttonSend = (Button) findViewById(R.id.buttonSend);
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    for (int i = 0; i < contactNumberArray.length; i++){
+                        if (contactNumberArray[i] != null) {
+                            smsManager.sendTextMessage(contactNumberArray[i], null, latitudeHistory[0] + "\n" + longitudeHistory[0],
+                                    null, null);
+                            Log.i("is it getting here: ", "level" + i);
+                        }
+                    }
+                    Toast.makeText(getApplicationContext(), "SMS Sent!",
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(),
+                            "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 
@@ -177,8 +244,6 @@ public class MainActivity extends AppCompatActivity {
             context.startService(i);
         }
     }
-
-
 
     // Battery level
     private void battery() {
@@ -235,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
                         String location = "Could not get location.";
                         Log.e(TAG, "Could not get location.");
                         locationText.setText(location);
+                        latitudeHistory[0] = location;
+                        longitudeHistory[0] = location;
                         longStrRef.setValue(location);
                         latStrRef.setValue(location);
 
@@ -242,6 +309,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Location location = locationResult.getLocation();
+                    latitudeHistory[0] = location.getLatitude() + "";
+                    longitudeHistory[0] = location.getLongitude() + "";
                     String locString = "Location: " +
                             " \nCapture Time: " + location.getTime() +
                             " \nLat: " + location.getLatitude() +
@@ -329,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Detect if headphones are pluged in
+    // Detect if headphones are plugged in
     private void getHeadphones() {
         // Check if headphones are plugged in
         Awareness.SnapshotApi.getHeadphoneState(ApiClient)
@@ -409,6 +478,177 @@ public class MainActivity extends AppCompatActivity {
             case TelephonyManager.NETWORK_TYPE_UNKNOWN: return "Unknown";
         }
         throw new RuntimeException("New type of network");
+    }
+
+    private void populateLocalCopyContacts() {
+
+        contactName1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNameArray[0] = value;
+                //Log.i("contact Name1", contactNameArray[0]);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactName2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNameArray[1] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactName3.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNameArray[2] = value;
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactName4.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNameArray[3] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactName5.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNameArray[4] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactNo1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNumberArray[0] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactNo2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNumberArray[1] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactNo3.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNumberArray[2] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactNo4.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNumberArray[3] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        contactNo5.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                contactNumberArray[4] = value;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        Log.i(TAG, "All contact names: " + contactNameArray[0] + " " + contactNameArray[1] + " " + contactNameArray[2] + " " + contactNameArray[3]
+        + " " + contactNameArray[4]);
+
+
     }
 
 }

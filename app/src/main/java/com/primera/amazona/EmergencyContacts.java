@@ -1,6 +1,9 @@
 package com.primera.amazona;
 
+import com.primera.amazona.MainActivity;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class EmergencyContacts extends AppCompatActivity {
+
 
     private static final String TAG = "readContacts";
 
@@ -67,7 +71,6 @@ public class EmergencyContacts extends AppCompatActivity {
     DatabaseReference contactNo5;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,8 +106,8 @@ public class EmergencyContacts extends AppCompatActivity {
         // Populates name and numbers from database
         readDatabase();
 
-
     }
+
 
     // Back button
     public void back_Main (View view) {
@@ -217,6 +220,7 @@ public class EmergencyContacts extends AppCompatActivity {
             phoneNo = cursor.getString(phoneIndex);
             name = cursor.getString(nameIndex);
 
+
             // Save to database according to case
             switch (contactNo) {
                 case RESULT_PICK_CONTACT1:
@@ -224,30 +228,56 @@ public class EmergencyContacts extends AppCompatActivity {
                     //numberResult1.setText(phoneNo);
                     contactName1.setValue(name);
                     contactNo1.setValue(phoneNo);
+
+
+                    // Displays names and numbers
+                    //nameResult1.setText(contPref.getString("contName1", null));
+                    //numberResult1.setText(contPref.getString("contNo1", null));
                     break;
+
+
                 case RESULT_PICK_CONTACT2:
                     //nameResult2.setText(name);
                     //numberResult2.setText(phoneNo);
                     contactName2.setValue(name);
                     contactNo2.setValue(phoneNo);
+
+                    // Displays names and numbers
+                    //nameResult2.setText(contPref.getString("contName2", null));
+                    //numberResult2.setText(contPref.getString("contNo2", null));
                     break;
+
+
                 case RESULT_PICK_CONTACT3:
                     //nameResult3.setText(name);
                     //numberResult3.setText(phoneNo);
                     contactName3.setValue(name);
                     contactNo3.setValue(phoneNo);
+
+                    // Displays names and numbers
+                   // nameResult3.setText(contPref.getString("contName3", null));
+                    //numberResult3.setText(contPref.getString("contNo3", null));
                     break;
+
+
                 case RESULT_PICK_CONTACT4:
-                    //nameResult4.setText(name);
-                    //numberResult4.setText(phoneNo);
+                    //Database copy
                     contactName4.setValue(name);
                     contactNo4.setValue(phoneNo);
+
+                    //nameResult4.setText(contPref.getString("contName4", null));
+                    //numberResult4.setText(contPref.getString("contNo4", null));
                     break;
+
+
                 case RESULT_PICK_CONTACT5:
-                    //nameResult5.setText(name);
-                    //numberResult5.setText(phoneNo);
+                    // Database copy
                     contactName5.setValue(name);
                     contactNo5.setValue(phoneNo);
+
+                    // Displays names and numbers
+                    //nameResult5.setText(contPref.getString("contName5", null));
+                    //numberResult5.setText(contPref.getString("contNo5", null));
                     break;
 
             }
@@ -269,6 +299,8 @@ public class EmergencyContacts extends AppCompatActivity {
                 contactName1.setValue(name);
                 contactNo1.setValue(phoneNo);
                 break;
+
+
             case DELETE_CONTACT2:
                 phoneNo = null;
                 name = "Add Emergency Contact";
@@ -277,6 +309,8 @@ public class EmergencyContacts extends AppCompatActivity {
                 contactName2.setValue(name);
                 contactNo2.setValue(phoneNo);
                 break;
+
+
             case DELETE_CONTACT3:
                 phoneNo = null;
                 name = "Add Emergency Contact";
@@ -285,6 +319,8 @@ public class EmergencyContacts extends AppCompatActivity {
                 contactName3.setValue(name);
                 contactNo3.setValue(phoneNo);
                 break;
+
+
             case DELETE_CONTACT4:
                 phoneNo = null;
                 name = "Add Emergency Contact";
@@ -293,6 +329,7 @@ public class EmergencyContacts extends AppCompatActivity {
                 contactName4.setValue(name);
                 contactNo4.setValue(phoneNo);
                 break;
+
             case DELETE_CONTACT5:
                 phoneNo = null;
                 name = "Add Emergency Contact";
@@ -300,6 +337,7 @@ public class EmergencyContacts extends AppCompatActivity {
                 numberResult5.setText(phoneNo);
                 contactName5.setValue(name);
                 contactNo5.setValue(phoneNo);
+
                 break;
         }
 
@@ -451,22 +489,10 @@ public class EmergencyContacts extends AppCompatActivity {
             }
         });
 
-        contactNo5.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                numberResult5.setText(value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
-
 }
+
+
+
+
