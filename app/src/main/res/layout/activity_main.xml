@@ -123,11 +123,11 @@
         app:layout_constraintVertical_bias="0.965" />
 
     <Button
-        android:id="@+id/buttonSend"
+        android:id="@+id/buttonStop"
         android:layout_width="wrap_content"
         android:layout_height="47dp"
         android:onClick="recordVideo"
-        android:text="Send"
+        android:text="Stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.104"
         app:layout_constraintLeft_toLeftOf="parent"

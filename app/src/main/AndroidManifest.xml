@@ -2,6 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.primera.amazona">
 
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
+
+
+
+
+    <uses-feature android:name="android.hardware.camera2.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera2.any"
+        android:required="false" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +33,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,38 +40,42 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Recorder">
             <intent-filter>
                 <action android:name="android.intent.action.SHOW_APP_INFO" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".EmergencyContacts" android:label="Emergency Contacts">
-
+        <activity
+            android:name=".EmergencyContacts"
+            android:label="Emergency Contacts">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".SettingsActivity" android:label="Settings">
-
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings">
             <intent-filter>
                 <action android:name="android.intent.action.QUICK_VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- <service android:name=".ActivityRecognizedService" /> -->
 
-        <!--<service android:name=".ActivityRecognizedService" /> -->
+
+
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyAxKx2RkMgUGB7p1rsm_HCpk2b_F9yymFI"/>
+            android:value="AIzaSyAxKx2RkMgUGB7p1rsm_HCpk2b_F9yymFI" />
 
-        <!--Do I need? first for Place, second for Beacon -->
+        <!-- Do I need? first for Place, second for Beacon -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAxKx2RkMgUGB7p1rsm_HCpk2b_F9yymFI" />
@@ -56,28 +83,41 @@
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyAxKx2RkMgUGB7p1rsm_HCpk2b_F9yymFI" />
 
+        <service
+            android:name=".locationHistory"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <service android:name=".TriggerService"/>
+
+        <receiver android:enabled="true" android:exported="false" android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:enabled="true" android:exported="false" android:name=".LocationUpdateReceiver">
+            <intent-filter>
+                <action android:name=".LOCATION_UPDATE_ACTION"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:enabled="true" android:exported="false" android:name=".AlarmReceiver">
+            <intent-filter>
+                <action android:name="com.primera.amazona.SEND_ALERT_ACTION"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.primera.amazona.SEND_ALERT_ACTION_SINGLE"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".TriggerReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.SCREEN_ON"/>
+            </intent-filter>
+        </receiver>
+
     </application>
-
-
-    <!-- getHeadphoneState(), TimeFence: needs no permission-->
-    <!--For getDetectedActivity(), DetectedActivityFence-->
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
-    <!--getBeaconState(), getLocation(), getPlaces(), getWeather(), BeaconFence, LocationFence-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera2.autofocus" />
-    <uses-feature android:name="android.hardware.camera2.any" android:required="false" />
-
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <uses-permission android:name="android.permission.SEND_SMS" />
-
-
-
 
 </manifest>
