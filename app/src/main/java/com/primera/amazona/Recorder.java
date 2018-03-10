@@ -4,10 +4,12 @@ package com.primera.amazona;
  * Created by queenlu on 11/15/17.
  */
 
+import java.io.File;
 import java.io.IOException;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -24,14 +26,18 @@ import android.widget.ToggleButton;
 
 public class Recorder extends Activity implements SurfaceHolder.Callback {
 
-    private final String VIDEO_PATH_NAME = "/mnt/sdcard/VGA_30fps_512vbrate.mp4";
+    private String VIDEO_PATH_NAME = "/mnt/sdcard/VGA_30fps_512vbrate.mp4";
+    private int videoCounter = 0;
+    //private String MP4 = ".mp4";
 
     private MediaRecorder mMediaRecorder;
     private Camera mCamera;
+    private Context context;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
     private View mToggleButton;
     private boolean mInitSuccesful;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +98,13 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
             mCamera.unlock();
         }
 
+        Camera.Parameters params = mCamera.getParameters();
+        if (params.getSupportedFocusModes().contains(
+                Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        }
+        mCamera.setParameters(params);
+
         if(mMediaRecorder == null)  mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setPreviewDisplay(surface);
         mMediaRecorder.setCamera(mCamera);
@@ -106,6 +119,7 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
         mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(640, 480);
+        videoCounter++;
         mMediaRecorder.setOutputFile(VIDEO_PATH_NAME);
 
         try {

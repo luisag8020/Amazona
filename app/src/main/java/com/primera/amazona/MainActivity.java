@@ -239,8 +239,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         gpsLocation myLocation = new gpsLocation(MainActivity.this);
+        contextAware awareness = new contextAware(MainActivity.this);
         myLocation.getLocation();
-        getNetwork();
+        awareness.getNetwork();
         battery();
         getActivity();
 
@@ -293,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
         battery();
         getActivity();
         //getLocation();     // Get location and weather
-        getNetwork();
+        //getNetwork();
 
     }
 
@@ -369,14 +370,25 @@ public class MainActivity extends AppCompatActivity {
                         ActivityRecognitionResult aResult = detectedActivityResult.getActivityRecognitionResult();
                         DetectedActivity probableActivity = aResult.getMostProbableActivity();
 
-                        String activityDetect = probableActivity.toString();
+                        int activityDetect = probableActivity.getType();
+                        String activityUser = "";
+                        if (activityDetect == 0) {activityUser = "IN A VEHICLE";}
+                        else if (activityDetect == 1) {activityUser = "ON FOOT";}
+                        else if (activityDetect == 2) {activityUser = "ON A BICYCLE";}
+                        else if (activityDetect == 3) {activityUser = "STATIONARY";}
+                        else if (activityDetect == 4) {activityUser = "UNKOWN ACTIVITY";}
+                        else if (activityDetect == 5) {activityUser = "TILTING";}
+                        else if (activityDetect == 7) {activityUser = "WALKING";}
+                        else if (activityDetect == 8) {activityUser = "RUNNING";}
+
+
                         //toString() + "Type: " + String.valueOf(probableActivity.getType());
                         Log.i(TAG, probableActivity.toString() + " " + String.valueOf(probableActivity.getType()));
-                        activityText.setText(activityDetect);
+                        activityText.setText(activityUser);
 
                         SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                         SharedPreferences.Editor editor = saveLocation.edit();
-                        editor.putString("detectedActivity", activityDetect);
+                        editor.putString("detectedActivity", activityUser);
                         editor.commit();
                     }
                 });
@@ -497,45 +509,45 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Obtains type and strength of network and prints it
-    private void getNetwork() {
-        // get network status
-        boolean connected = false;
-        TextView connectText=(TextView)findViewById(R.id.connectText);
-        String connectString = "let's check";
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
-            connected = true;
-            connectString = "connected";
-            Log.i(TAG, "connected");
-            connectText.setText(connectString);
-
-        }
-        else {
-            connected = false;
-            connectString = "not connected";
-            Log.i(TAG, "not connected");
-            connectText.setText(connectString);
-        }
-
-        // Specific network type
-        if (connected == true) {
-            TextView networkText=(TextView)findViewById(R.id.networkText);
-            String networkType = "Network Type: " + networkType() +
-                    "\n Strength Level: " + strLevel +
-                    "\n Strength: " + mSignalStrength +
-                    "\n String:  " + strengthString;
-            networkText.setText(networkType);
-            Log.i(TAG, "network type: " + networkType);
-
-            SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SharedPreferences.Editor editor = saveLocation.edit();
-            editor.putString("networkType", networkType);
-            editor.commit();
-        }
-
-    }
+//    private void getNetwork() {
+//        // get network status
+//        boolean connected = false;
+//        TextView connectText=(TextView)findViewById(R.id.connectText);
+//        String connectString = "let's check";
+//        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+//        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+//                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+//            //we are connected to a network
+//            connected = true;
+//            connectString = "connected";
+//            Log.i(TAG, "connected");
+//            connectText.setText(connectString);
+//
+//        }
+//        else {
+//            connected = false;
+//            connectString = "not connected";
+//            Log.i(TAG, "not connected");
+//            connectText.setText(connectString);
+//        }
+//
+//        // Specific network type
+//        if (connected == true) {
+//            TextView networkText=(TextView)findViewById(R.id.networkText);
+//            String networkType = "Network Type: " + networkType() +
+//                    "\n Strength Level: " + strLevel +
+//                    "\n Strength: " + mSignalStrength +
+//                    "\n String:  " + strengthString;
+//            networkText.setText(networkType);
+//            Log.i(TAG, "network type: " + networkType);
+//
+//            SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//            SharedPreferences.Editor editor = saveLocation.edit();
+//            editor.putString("networkType", networkType);
+//            editor.commit();
+//        }
+//
+//    }
 
     // Detect if headphones are plugged in
     private void getHeadphones() {
