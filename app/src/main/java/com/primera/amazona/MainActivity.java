@@ -152,10 +152,10 @@ public class MainActivity extends AppCompatActivity {
 
         //startService(new Intent(this, locationHistory.class));
 
-        SharedPreferences contactNumberList = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        SharedPreferences.Editor editor = contactNumberList.edit();
-        editor.putString("mainAct", MainActivity.this+"");
-        editor.commit();
+        //SharedPreferences contactNumberList = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        //SharedPreferences.Editor editor = contactNumberList.edit();
+        //editor.putString("mainAct", MainActivity.this+"");
+        //editor.commit();
 
         // Power button protocol
         startService(new Intent(this, TriggerService.class));
@@ -262,6 +262,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button recordButton = (Button) findViewById(R.id.RecordButton);
+        recordButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                recordVideo(v);
+            }
+        });
+
         // For power button
         Receiver powerBroadCastReceiver = new Receiver();
         IntentFilter screenStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -282,6 +289,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PanicAlert panicAlert = new PanicAlert(getApplicationContext());
                 panicAlert.deActivate();
+
+               // PanicMessage panicMessage = new PanicMessage(getApplicationContext());
+               // panicMessage.sendAlertMessage();
             }
         });
 
@@ -1013,5 +1023,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
 
 }

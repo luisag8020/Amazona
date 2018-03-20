@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ToggleButton
-        android:id="@+id/toggleRecordingButton"
-        android:layout_width="fill_parent"
-        android:textOff="Start Recording"
-        android:textOn="Stop Recording"
-        android:layout_height="wrap_content"/>
+    <!--<ToggleButton-->
+        <!--android:id="@+id/toggleRecordingButton"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:textOff="Start Recording"-->
+        <!--android:textOn="Stop Recording"-->
+        <!--android:layout_height="wrap_content"/>-->
 
     <FrameLayout
         android:layout_width="fill_parent"
