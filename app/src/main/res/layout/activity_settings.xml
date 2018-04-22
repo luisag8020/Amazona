@@ -7,11 +7,38 @@
     android:orientation="vertical">
 
 
+    <TextView
+        android:id="@+id/textInterval"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:text="HISTORY LOCATION TIME INTERVAL:"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.079"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.664" />
+
+    <Spinner
+        android:id="@+id/locationInterval"
+        android:layout_width="248dp"
+        android:layout_height="41dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInterval" />
+
+
     <Switch
-        android:id="@+id/messageSwitch"
+        android:id="@+id/activitySwitch"
         android:layout_width="358dp"
         android:layout_height="47dp"
-        android:text="Emergency Message"
+        android:text="Detected Activity"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +66,7 @@
         android:id="@+id/locationSwitch"
         android:layout_width="358dp"
         android:layout_height="47dp"
-        android:text="Location"
+        android:text="Location History"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,43 +76,76 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.288" />
 
-    <RadioButton
-        android:id="@+id/soundButton"
-        android:layout_width="90dp"
-        android:layout_height="34dp"
-        android:text="Sound"
+    <Button
+        android:id="@+id/Back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="back_to_Main"
+        android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.945"
+        app:layout_constraintHorizontal_bias="0.469"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintVertical_bias="0.965" />
 
-    <RadioButton
-        android:id="@+id/Vibrate"
-        android:layout_width="90dp"
-        android:layout_height="34dp"
-        android:text="Vibrate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.088" />
 
-    <RadioButton
-        android:id="@+id/silenceButton"
-        android:layout_width="90dp"
-        android:layout_height="34dp"
-        android:text="Silence"
+    <RadioGroup
+        android:id="@+id/groupAudio"
+        android:layout_width="352dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/volText"
+        app:layout_constraintVertical_bias="0.0">
+
+        <RadioButton
+            android:id="@+id/soundButton"
+            android:layout_width="90dp"
+            android:layout_height="34dp"
+            android:text="Sound"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.945"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.088" />
+
+        <RadioButton
+            android:id="@+id/vibrateButton"
+            android:layout_width="90dp"
+            android:layout_height="34dp"
+            android:text="Vibrate"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.088" />
+
+        <RadioButton
+            android:id="@+id/silenceButton"
+            android:layout_width="90dp"
+            android:layout_height="34dp"
+            android:text="Silence"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.054"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.088" />
+
+    </RadioGroup>
+
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/sendInfo"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:text="SEND INFORMATION:"
@@ -98,13 +158,13 @@
         app:layout_constraintVertical_bias="0.224" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/volText"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:text="PHONE VOLUME AFTER ALERT"
+        android:text="PHONE VOLUME AFTER ALERT:"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.084"
+        app:layout_constraintHorizontal_bias="0.086"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -61,39 +61,47 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        try {
-                        initRecorder(mHolder.getSurface());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-//        mToggleButton = (ToggleButton) findViewById(R.id.toggleRecordingButton);
-//
-//        mToggleButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            // toggle video recording
-//            public void onClick(View v) {
-//                v.setSelected(true);
-//                if (((ToggleButton)v).isChecked()) {
-//                    mMediaRecorder.start();
-//                    try {
-//                        Thread.sleep(10 * 1000);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    finish();
-//                }
-//                else {
-//                    mMediaRecorder.stop();
-//                    mMediaRecorder.reset();
-//                    try {
+//        try {
 //                        initRecorder(mHolder.getSurface());
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
 //                    }
-//                }
-//            }
-//        });
+////        try {
+////                        Thread.sleep(10 * 1000);
+////                    } catch (Exception e) {
+////                        e.printStackTrace();
+////                    }
+////
+////                            mMediaRecorder.start();
+
+
+        mToggleButton = (ToggleButton) findViewById(R.id.toggleRecordingButton);
+
+        mToggleButton.setOnClickListener(new OnClickListener() {
+            @Override
+            // toggle video recording
+            public void onClick(View v) {
+                v.setSelected(true);
+                if (((ToggleButton)v).isChecked()) {
+                    mMediaRecorder.start();
+                    try {
+                        Thread.sleep(10 * 1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    finish();
+                }
+                else {
+                    mMediaRecorder.stop();
+                    mMediaRecorder.reset();
+                    try {
+                        initRecorder(mHolder.getSurface());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
     }
 
@@ -102,17 +110,21 @@ public class Recorder extends Activity implements SurfaceHolder.Callback {
     private void initRecorder(Surface surface) throws IOException {
         // It is very important to unlock the camera before doing setCamera
         // or it will results in a black preview
+
         if(mCamera == null) {
             mCamera = Camera.open();
-            mCamera.unlock();
+
+            Camera.Parameters params = mCamera.getParameters();
+            if (params.isVideoStabilizationSupported() && !params.getVideoStabilization()) {
+                params.setVideoStabilization(true);
+            }
+
+            if (params.getSupportedFocusModes().contains("continuous-video")) {
+                params.setFocusMode("continuous-video");
+                mCamera.unlock();
+            }
         }
 
-//        Camera.Parameters params = mCamera.getParameters();
-//        if (params.getSupportedFocusModes().contains(
-//                Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-//            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-//        }
-//        mCamera.setParameters(params);
 
         if(mMediaRecorder == null)  mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setPreviewDisplay(surface);
