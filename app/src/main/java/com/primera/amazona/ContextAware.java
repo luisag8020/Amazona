@@ -2,9 +2,12 @@ package com.primera.amazona;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -12,23 +15,25 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import static android.content.Context.BATTERY_SERVICE;
+
 /**
  * Created by queenlu on 2/26/18.
  */
 
-public class contextAware {
+public class ContextAware {
     private Context context;
     int mSignalStrength = 0;
     String strengthString = "";
     int strLevel = 0;
-    TelephonyManager mTelephonyManager;
-    MyPhoneStateListener mPhoneStatelistener;
+    //TelephonyManager mTelephonyManager;
+    //MyPhoneStateListener mPhoneStatelistener;
 
-    public contextAware(Context context) {
+    public ContextAware(Context context) {
         this.context = context;
-        mPhoneStatelistener = new MyPhoneStateListener();
-        mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        //mPhoneStatelistener = new MyPhoneStateListener();
+        //mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //mTelephonyManager.listen(mPhoneStatelistener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 
     public void getNetwork() {
@@ -88,9 +93,6 @@ public class contextAware {
         return strengthString;
     }
 
-    public String getNeworkType() {
-        return networkType();
-    }
 
     private String networkType() {
         TelephonyManager tManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -138,9 +140,18 @@ public class contextAware {
             mSignalStrength = signalStrength.getGsmSignalStrength();
             //mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
             strLevel = signalStrength.getLevel(); // 0 -> lowest
+
         }
     }
 
+    // Battery level
+    @TargetApi(21)
+    public String battery() {
+        BatteryManager bm = (BatteryManager)context.getSystemService(BATTERY_SERVICE);
+        int batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        Log.i("battery", "Battery: " + batteryLevel);
 
+        return Integer.toString(batteryLevel);
+    }
 
 }

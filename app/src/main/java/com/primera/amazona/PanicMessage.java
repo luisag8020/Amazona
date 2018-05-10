@@ -20,6 +20,8 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.content.SharedPreferences;
+import android.widget.TextView;
+
 import static android.telephony.SmsMessage.MAX_USER_DATA_SEPTETS;
 
 
@@ -54,9 +56,15 @@ public class PanicMessage {
         String IAM;
         String message;
 
+        Log.i("createmessage", "in create message 1");
+
+
+        ContextAware conAware = new ContextAware(context);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Map<String, String> allPreferences = (Map<String, String>) sharedPreferences.getAll();
         sharedPreferences.getBoolean("locationSwitch", false);
+
 
         // CHANGE SO THAT IT IS NOT IN THE MAIN ACTIVITY. MOve it here
         detectedActivity = allPreferences.get("detectedActivity");
@@ -65,7 +73,7 @@ public class PanicMessage {
         if (sharedPreferences.getBoolean("batterySwitch", false) &&
                 sharedPreferences.getBoolean("activitySwitch", false)) {
             IAM = "This is an emergency." + " I was " + detectedActivity +  " at the moment of the incident with " +
-                    sharedPreferences.getString("battery", "unknown") + "% battery. ";
+                    conAware.battery() + "% battery. ";
         }
         else if (sharedPreferences.getBoolean("activitySwitch", false) &&
                 !sharedPreferences.getBoolean("batterySwitch", false)){
@@ -73,8 +81,7 @@ public class PanicMessage {
         }
         else if (!sharedPreferences.getBoolean("activitySwitch", false) &&
                 sharedPreferences.getBoolean("batterySwitch", false)) {
-            IAM = "This is an emergency. I had " +
-                    sharedPreferences.getString("battery", "unknown") + "% battery. ";
+            IAM = "This is an emergency. I had " + conAware.battery() + "% battery. ";
         }
         else {
             IAM = "This is an emergency.";
@@ -91,13 +98,16 @@ public class PanicMessage {
 
     public String createMessageString2() {
         String locationString;
+        Log.i("createmessage", "in create message 2");
+
         if (location != null) {
             this.longitude = Double.toString(location.getLongitude());
             this.latitude = Double.toString(location.getLatitude());
             this.accuracy = Double.toString(location.getAccuracy());
             this.speed = Double.toString(location.getSpeed());
             this.time = Double.toString(location.getTime());
-            locationString = GOOGLE_MAP_URL + latitude + "," + longitude; // + " Accuracy: " + accuracy;
+
+            locationString = GOOGLE_MAP_URL + latitude + "," + longitude + " Accuracy: " + accuracy + " ";
         }
         else
             locationString = "Could not get location";
@@ -107,6 +117,7 @@ public class PanicMessage {
     }
 
     public void sendAlertMessage(Location location)  {
+        Log.i("alertmessage", "in alert message");
         this.location = location;
 
         String message1 = createMessageString1();
@@ -183,7 +194,7 @@ public class PanicMessage {
                 smsManager.sendTextMessage(phoneNumber, null, message2, null, null);
             }
             else
-                smsManager.sendTextMessage(phoneNumber, null, message1, null, null);
+                smsManager.sendTextMessage(phoneNumber, null, "blah1Only", null, null);
 
         } catch (Exception exception) {
             Log.e("messageTag", "Sending SMS failed " + exception.getMessage());
@@ -208,33 +219,34 @@ public class PanicMessage {
         String lon5 = locInterval.getString("Lon5", "none");
 
 
-        if (lat1.equals("none") || lat1.equals("null"))
-            lat1 = "";
-        else if (lat2.equals("none") || lat2.equals("null"))
-            lat2 = "";
-        else if (lat3.equals("none") || lat3.equals("null"))
-            lat3 = "";
-        else if (lat4.equals("none") || lat4.equals("null"))
-            lat4 = "";
-        else if (lat5.equals("none") || lat5.equals("null"))
-            lat5 = "";
+//        if (lat1.equals("none") || lat1.equals("null"))
+//            lat1 = "";
+//        else if (lat2.equals("none") || lat2.equals("null"))
+//            lat2 = "";
+//        else if (lat3.equals("none") || lat3.equals("null"))
+//            lat3 = "";
+//        else if (lat4.equals("none") || lat4.equals("null"))
+//            lat4 = "";
+//        else if (lat5.equals("none") || lat5.equals("null"))
+//            lat5 = "";
+//
+//        if (lon1.equals("none") || lon1.equals("null"))
+//            lon1 = "";
+//        else if (lon2.equals("none") || lon2.equals("null"))
+//            lon2 = "";
+//        else if (lon3.equals("none") || lon3.equals("null"))
+//            lon3 = "";
+//        else if (lon4.equals("none") || lon4.equals("null"))
+//            lon4 = "";
+//        else if (lon5.equals("none") || lon5.equals("null"))
+//            lon5 = "";
 
-        if (lon1.equals("none") || lon1.equals("null"))
-            lon1 = "";
-        else if (lon2.equals("none") || lon2.equals("null"))
-            lon2 = "";
-        else if (lon3.equals("none") || lon3.equals("null"))
-            lon3 = "";
-        else if (lon4.equals("none") || lon4.equals("null"))
-            lon4 = "";
-        else if (lon5.equals("none") || lon5.equals("null"))
-            lon5 = "";
-
+        Log.i("history", lon1 + " " + lon2 + " " + lon3 +  " " + " " + " ");
         String locationString = "www.google.com/maps/dir/" + lat1 + "," + lon1 + "/" +
                 lat2 + "," + lon2 + "/" + lat3 + "," + lon3 + "/" + lat4 + "," + lon4 + "/" +
-                lat5 + "," + lon5 + "/";
+                lat5 + "," + lon5;
 
-        //https://www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861/@33.9598637,-106.905489,13z/data=!4m2!4m1!3e2
+        //locationString = "www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861/33.9598637,-106.905489";
         sendMessage("Location history: ", locationString);
 
     }

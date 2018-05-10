@@ -116,7 +116,7 @@ public class GpsLocationReceiver extends BroadcastReceiver{
                     else // default
                         tempTime = AppConstants.FIVE_MINUTES;
 
-                    Thread.sleep(tempTime);}
+                    Thread.sleep(tempTime);} // change back to TempTime
                 catch(InterruptedException e) {}
 
             }
@@ -125,6 +125,7 @@ public class GpsLocationReceiver extends BroadcastReceiver{
 
     // Captures and stores location history
     private void updateInfo(int counter) {
+        Log.i("get", "gets to updateinfo in gpslocationreceiver");
         CurrentLocationProvider currentLocationProvider = new CurrentLocationProvider(context);
         Location loc = currentLocationProvider.getLocation();
 
@@ -133,7 +134,6 @@ public class GpsLocationReceiver extends BroadcastReceiver{
 
 
         if (counter == 1) {
-            //Lat1.setValue("its getting to 1");
 
             double lat = loc.getLatitude();
             double lon = loc.getLongitude();

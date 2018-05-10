@@ -5,43 +5,27 @@ import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.BatteryManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.CellInfo;
-import android.telephony.CellInfoGsm;
-import android.telephony.CellInfoLte;
-import android.telephony.CellSignalStrengthGsm;
-import android.telephony.CellSignalStrengthLte;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
-import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.awareness.snapshot.HeadphoneStateResult;
-import com.google.android.gms.awareness.snapshot.LocationResult;
-import com.google.android.gms.awareness.snapshot.WeatherResult;
 import com.google.android.gms.awareness.state.HeadphoneState;
-import com.google.android.gms.awareness.state.Weather;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.snapshot.DetectedActivityResult;
@@ -53,19 +37,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import com.primera.amazona.PanicMessage;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-
-import static com.google.android.gms.awareness.state.Weather.FAHRENHEIT;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,40 +60,40 @@ public class MainActivity extends AppCompatActivity {
 
     // Firebase
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference batteryStrRef1;
-    DatabaseReference longStrRef1;
-    DatabaseReference latStrRef1;
-    DatabaseReference altStrRef1;
-    DatabaseReference accStrRef1;
-    DatabaseReference captureTimeStrRef1;
+//    DatabaseReference batteryStrRef1;
+//    DatabaseReference longStrRef1;
+//    DatabaseReference latStrRef1;
+//    DatabaseReference altStrRef1;
+//    DatabaseReference accStrRef1;
+//    DatabaseReference captureTimeStrRef1;
 
-    DatabaseReference batteryStrRef2;
-    DatabaseReference longStrRef2;
-    DatabaseReference latStrRef2;
-    DatabaseReference altStrRef2;
-    DatabaseReference accStrRef2;
-    DatabaseReference captureTimeStrRef2;
+//    DatabaseReference batteryStrRef2;
+//    DatabaseReference longStrRef2;
+//    DatabaseReference latStrRef2;
+//    DatabaseReference altStrRef2;
+//    DatabaseReference accStrRef2;
+//    DatabaseReference captureTimeStrRef2;
 
-    DatabaseReference batteryStrRef3;
-    DatabaseReference longStrRef3;
-    DatabaseReference latStrRef3;
-    DatabaseReference altStrRef3;
-    DatabaseReference accStrRef3;
-    DatabaseReference captureTimeStrRef3;
+//    DatabaseReference batteryStrRef3;
+//    DatabaseReference longStrRef3;
+//    DatabaseReference latStrRef3;
+//    DatabaseReference altStrRef3;
+//    DatabaseReference accStrRef3;
+//    DatabaseReference captureTimeStrRef3;
 
-    DatabaseReference batteryStrRef4;
-    DatabaseReference longStrRef4;
-    DatabaseReference latStrRef4;
-    DatabaseReference altStrRef4;
-    DatabaseReference accStrRef4;
-    DatabaseReference captureTimeStrRef4;
+//    DatabaseReference batteryStrRef4;
+//    DatabaseReference longStrRef4;
+//    DatabaseReference latStrRef4;
+//    DatabaseReference altStrRef4;
+//    DatabaseReference accStrRef4;
+//    DatabaseReference captureTimeStrRef4;
 
-    DatabaseReference batteryStrRef5;
-    DatabaseReference longStrRef5;
-    DatabaseReference latStrRef5;
-    DatabaseReference altStrRef5;
-    DatabaseReference accStrRef5;
-    DatabaseReference captureTimeStrRef5;
+//    DatabaseReference batteryStrRef5;
+//    DatabaseReference longStrRef5;
+//    DatabaseReference latStrRef5;
+//    DatabaseReference altStrRef5;
+//    DatabaseReference accStrRef5;
+//    DatabaseReference captureTimeStrRef5;
 
     DatabaseReference weatherStrRef;
 
@@ -160,11 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
         startService(new Intent(this, locationHistory.class));
 
-        //SharedPreferences contactNumberList = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        //SharedPreferences.Editor editor = contactNumberList.edit();
-        //editor.putString("mainAct", MainActivity.this+"");
-        //editor.commit();
-
         // Power button protocol
         startService(new Intent(this, TriggerService.class));
 
@@ -190,42 +159,41 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        // Firebase reference
-        //mStorageRef = FirebaseStorage.getInstance().getReference();
-        batteryStrRef1 = database.getReference("battery1");
-        longStrRef1 = database.getReference("location1").child("longitude");
-        latStrRef1 = database.getReference("location1").child("latitude");
-        altStrRef1 = database.getReference("location1").child("altitude");
-        accStrRef1 = database.getReference("location1").child("accuracy");
-        captureTimeStrRef1 = database.getReference("location1").child("location Time");
 
-        batteryStrRef2 = database.getReference("battery2");
-        longStrRef2 = database.getReference("location2").child("longitude");
-        latStrRef2 = database.getReference("location2").child("latitude");
-        altStrRef2 = database.getReference("location2").child("altitude");
-        accStrRef2 = database.getReference("location2").child("accuracy");
-        captureTimeStrRef2 = database.getReference("location2").child("location Time");
+//        batteryStrRef1 = database.getReference("battery1");
+//        longStrRef1 = database.getReference("location1").child("longitude");
+//        latStrRef1 = database.getReference("location1").child("latitude");
+//        altStrRef1 = database.getReference("location1").child("altitude");
+//        accStrRef1 = database.getReference("location1").child("accuracy");
+//        captureTimeStrRef1 = database.getReference("location1").child("location Time");
 
-        batteryStrRef3 = database.getReference("battery3");
-        longStrRef3 = database.getReference("location3").child("longitude");
-        latStrRef3 = database.getReference("location3").child("latitude");
-        altStrRef3 = database.getReference("location3").child("altitude");
-        accStrRef3 = database.getReference("location3").child("accuracy");
-        captureTimeStrRef3 = database.getReference("location3").child("location Time");
-
-        batteryStrRef4 = database.getReference("battery4");
-        longStrRef4 = database.getReference("location4").child("longitude");
-        latStrRef4 = database.getReference("location4").child("latitude");
-        altStrRef4 = database.getReference("location4").child("altitude");
-        accStrRef4 = database.getReference("location4").child("accuracy");
-        captureTimeStrRef4 = database.getReference("location4").child("location Time");
-
-        batteryStrRef5 = database.getReference("battery5");
-        longStrRef5 = database.getReference("location5").child("longitude");
-        latStrRef5 = database.getReference("location5").child("latitude");
-        altStrRef5 = database.getReference("location5").child("altitude");
-        accStrRef5 = database.getReference("location5").child("accuracy");
-        captureTimeStrRef5 = database.getReference("location5").child("location Time");
+//        batteryStrRef2 = database.getReference("battery2");
+//        longStrRef2 = database.getReference("location2").child("longitude");
+//        latStrRef2 = database.getReference("location2").child("latitude");
+//        altStrRef2 = database.getReference("location2").child("altitude");
+//        accStrRef2 = database.getReference("location2").child("accuracy");
+//        captureTimeStrRef2 = database.getReference("location2").child("location Time");
+//
+//        batteryStrRef3 = database.getReference("battery3");
+//        longStrRef3 = database.getReference("location3").child("longitude");
+//        latStrRef3 = database.getReference("location3").child("latitude");
+//        altStrRef3 = database.getReference("location3").child("altitude");
+//        accStrRef3 = database.getReference("location3").child("accuracy");
+//        captureTimeStrRef3 = database.getReference("location3").child("location Time");
+//
+//        batteryStrRef4 = database.getReference("battery4");
+//        longStrRef4 = database.getReference("location4").child("longitude");
+//        latStrRef4 = database.getReference("location4").child("latitude");
+//        altStrRef4 = database.getReference("location4").child("altitude");
+//        accStrRef4 = database.getReference("location4").child("accuracy");
+//        captureTimeStrRef4 = database.getReference("location4").child("location Time");
+//
+//        batteryStrRef5 = database.getReference("battery5");
+//        longStrRef5 = database.getReference("location5").child("longitude");
+//        latStrRef5 = database.getReference("location5").child("latitude");
+//        altStrRef5 = database.getReference("location5").child("altitude");
+//        accStrRef5 = database.getReference("location5").child("accuracy");
+//        captureTimeStrRef5 = database.getReference("location5").child("location Time");
 
         weatherStrRef = database.getReference("weather");
 
@@ -243,13 +211,17 @@ public class MainActivity extends AppCompatActivity {
         // Because this happens every time
         populateLocalCopyContacts();
 
-        populateLocationCopy();
+        //populateLocationCopy();
 
 
-        contextAware awareness = new contextAware(MainActivity.this);
+        ContextAware awareness = new ContextAware(MainActivity.this);
         awareness.getNetwork();
-        battery();
+        //battery();
         getActivity();
+
+        ContextAware conAware = new ContextAware(MainActivity.this);
+        TextView batteryText=(TextView)findViewById(R.id.batteryText);
+        batteryText.setText("Battery: " + conAware.battery());
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -305,10 +277,16 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(23)
     private void initSnapshots() {
 
-        battery();
+        //battery();
         getActivity();
         //getLocation();     // Get location and weather
         getNetwork();
+
+        CurrentLocationProvider currentLocationProvider = new CurrentLocationProvider(MainActivity.this);
+        Location loc = currentLocationProvider.getLocation();
+        TextView locationText = (TextView) findViewById(R.id.locationText);
+        locationText.setText("Location: " + loc.toString());
+        //loc.bearingTo() --> add to the message
 
     }
 
@@ -348,24 +326,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Battery level
-    private void battery() {
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = registerReceiver(null, ifilter);
-
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        int batteryPct = (int)((level / (float)scale) * 100);
-        TextView batteryText=(TextView)findViewById(R.id.batteryText);
-        String battery = String.valueOf(batteryPct);
-        Log.i(TAG, "Battery: " + batteryPct);
-        batteryText.setText("Battery: " + battery);
-        batteryStrRef1.setValue(battery);
-        SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        SharedPreferences.Editor editor = saveLocation.edit();
-        editor.putString("battery", battery);
-        editor.commit();
-    }
+//    private void battery() {
+//        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+//        Intent batteryStatus = registerReceiver(null, ifilter);
+//
+//        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+//        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+//
+//        int batteryPct = (int)((level / (float)scale) * 100);
+//        TextView batteryText=(TextView)findViewById(R.id.batteryText);
+//        String battery = String.valueOf(batteryPct);
+//        Log.i(TAG, "Battery: " + batteryPct);
+//        batteryText.setText("Battery: " + battery);
+//        batteryStrRef1.setValue(battery);
+//        SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//        SharedPreferences.Editor editor = saveLocation.edit();
+//        editor.putString("battery", battery);
+//        editor.commit();
+//    }
 
     public void getMultimediaMessage() {
         new multimediaMessage(MainActivity.this).openCamera();
@@ -611,6 +589,7 @@ public class MainActivity extends AppCompatActivity {
             //mSignalStrength = (2 * mSignalStrength) - 113; // -> dBm
             strLevel = signalStrength.getLevel(); // 0 -> lowest
 
+
             SharedPreferences saveLocation = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             SharedPreferences.Editor editor = saveLocation.edit();
             editor.putString("strengthString", strengthString);
@@ -656,187 +635,187 @@ public class MainActivity extends AppCompatActivity {
         throw new RuntimeException("New type of network");
     }
 
-    private void populateLocationCopy() {
-        longStrRef1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                longitudeArray[0] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        latStrRef1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                latitudeArray[0] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        longStrRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                longitudeArray[1] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        latStrRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                latitudeArray[1] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        longStrRef3.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                longitudeArray[2] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        latStrRef3.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                latitudeArray[2] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        longStrRef4.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                longitudeArray[3] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        latStrRef4.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                latitudeArray[3] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        longStrRef5.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                longitudeArray[4] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-        latStrRef5.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                latitudeArray[4] = value;
-                //Log.i("contact Name1", contactNameArray[0]);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }
+//    private void populateLocationCopy() {
+//        longStrRef1.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                longitudeArray[0] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        latStrRef1.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                latitudeArray[0] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        longStrRef2.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                longitudeArray[1] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        latStrRef2.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                latitudeArray[1] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        longStrRef3.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                longitudeArray[2] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        latStrRef3.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                latitudeArray[2] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        longStrRef4.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                longitudeArray[3] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        latStrRef4.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                latitudeArray[3] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        longStrRef5.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                longitudeArray[4] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//        latStrRef5.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                String value = dataSnapshot.getValue(String.class);
+//                latitudeArray[4] = value;
+//                //Log.i("contact Name1", contactNameArray[0]);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//    }
 
     private void populateLocalCopyContacts() {
 

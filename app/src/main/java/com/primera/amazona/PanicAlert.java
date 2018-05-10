@@ -54,6 +54,8 @@ import static com.primera.amazona.Intents.locationPendingIntent;
 
 public class PanicAlert extends AppCompatActivity{
     private int AUDIO_FLAG = 444;
+    public static final int MAX_RETRIES = 20;
+    public static final int LOCATION_WAIT_TIME = 3000;
     private static final String TAG = PanicAlert.class.getName();
     private LocationManager locationManager;
     private Context context;
@@ -96,10 +98,6 @@ public class PanicAlert extends AppCompatActivity{
         close(context);
         vibrateOnce();
 
-//        if (isActive()) {
-//            return;
-//        }
-
         ApplicationSettings.setAlertActive(context, true);
         getExecutorService().execute(
                 new Runnable() {
@@ -119,10 +117,10 @@ public class PanicAlert extends AppCompatActivity{
 
     private void activateAlert() {
         ApplicationSettings.setAlertActive(context, true);
+        registerLocationUpdate();
         sendFirstAlert();
         scheduleFutureAlert();
         //getMultimediaMessage();
-        //registerLocationUpdate();   ?????
     }
 
     public void deActivate() {
@@ -142,7 +140,9 @@ public class PanicAlert extends AppCompatActivity{
         // add the context awareness stuff here and choose how to send here
 
         CurrentLocationProvider currentLocationProvider = new CurrentLocationProvider(context);
-        Location loc = currentLocationProvider.getLocation();
+        //Location loc = currentLocationProvider.getLocation();
+        Location loc = getLocation(currentLocationProvider);
+
 
         // If location not available, schedule it for later
         if(loc != null) {
@@ -171,27 +171,25 @@ public class PanicAlert extends AppCompatActivity{
 
         createPanicMessage().sendHistoryMessage();
         createPanicMessage().sendAlertMessage(loc);
-
-
     }
 
-//    private Location getLocation(CurrentLocationProvider currentLocationProvider) {
-//        Location location = null;
-//        int retryCount = 0;
-//
-//        while (retryCount < MAX_RETRIES && location == null) {
-//            location = currentLocationProvider.getLocation();
-//            if (location == null) {
-//                try {
-//                    retryCount++;
-//                    Thread.sleep(LOCATION_WAIT_TIME);
-//                } catch (InterruptedException e) {
-//                    Log.e(TAG, "Location wait InterruptedException", e);
-//                }
-//            }
-//        }
-//        return location;
-//    }
+    private Location getLocation(CurrentLocationProvider currentLocationProvider) {
+        Location location = null;
+        int retryCount = 0;
+
+        while (retryCount < MAX_RETRIES && location == null) {
+            location = currentLocationProvider.getLocation();
+            if (location == null) {
+                try {
+                    retryCount++;
+                    Thread.sleep(LOCATION_WAIT_TIME);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Location wait InterruptedException", e);
+                }
+            }
+        }
+        return location;
+    }
 
 
 //    CurrentLocationProvider getCurrentLocationProvider() {
@@ -199,45 +197,47 @@ public class PanicAlert extends AppCompatActivity{
 //    }
 
 
-//    private void registerLocationUpdate() {
-//        int threadRunCount = 0;
-//        while(!ApplicationSettings.isFirstMsgWithLocationTriggered(context) && threadRunCount < 4){
-//            try {
-//                Thread.sleep(20000);
-//                threadRunCount++;
-//
-//                if (locationManager != null && locationPendingIntent(context) != null) {
-//                    locationManager.removeUpdates(locationPendingIntent(context));
-//                }
-//
-//                if (Build.VERSION.SDK_INT >= 23 &&
-//                        ContextCompat.checkSelfPermission( context, android.Manifest.permission.ACCESS_FINE_LOCATION ) +
-//                                ContextCompat.checkSelfPermission( context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//
-//
-//                    if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
-//                        locationManager.requestLocationUpdates(GPS_PROVIDER, AppConstants.GPS_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.GPS_MIN_DISTANCE, locationPendingIntent(context));
-//                    if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
-//                        locationManager.requestLocationUpdates(NETWORK_PROVIDER, AppConstants.NETWORK_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.NETWORK_MIN_DISTANCE, locationPendingIntent(context));
-//                    Log.e(">>>>>>>>", "threadRunCount = " + threadRunCount);
-//                }
-//
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        if (locationManager != null && locationPendingIntent(context) != null) {
-//            locationManager.removeUpdates(locationPendingIntent(context));
-//        }
+
+    private void registerLocationUpdate() {
+
 //        if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
-//            locationManager.requestLocationUpdates(GPS_PROVIDER, AppConstants.GPS_MIN_TIME, AppConstants.GPS_MIN_DISTANCE, locationPendingIntent(context));
+//            locationManager.requestLocationUpdates(GPS_PROVIDER, AppConstants.GPS_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.GPS_MIN_DISTANCE, locationPendingIntent(context));
 //        if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
-//            locationManager.requestLocationUpdates(NETWORK_PROVIDER, AppConstants.NETWORK_MIN_TIME, AppConstants.NETWORK_MIN_DISTANCE, locationPendingIntent(context));
+//            locationManager.requestLocationUpdates(NETWORK_PROVIDER, AppConstants.NETWORK_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.NETWORK_MIN_DISTANCE, locationPendingIntent(context));
 //
-//
-//    }
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) +
+                        ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            int threadRunCount = 0;
+            while (!ApplicationSettings.isFirstMsgWithLocationTriggered(context) && threadRunCount < 4) {
+                try {
+                    Thread.sleep(20000);
+                    threadRunCount++;
+
+                    if (locationManager != null && locationPendingIntent(context) != null) {
+                        locationManager.removeUpdates(locationPendingIntent(context));
+                    }
+                    if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
+                        locationManager.requestLocationUpdates(GPS_PROVIDER, AppConstants.GPS_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.GPS_MIN_DISTANCE, locationPendingIntent(context));
+                    if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
+                        locationManager.requestLocationUpdates(NETWORK_PROVIDER, AppConstants.NETWORK_MIN_TIME_IN_FIRST_ONE_MINUTE, AppConstants.NETWORK_MIN_DISTANCE, locationPendingIntent(context));
+                    Log.e(">>>>>>>>", "threadRunCount = " + threadRunCount);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (locationManager != null && locationPendingIntent(context) != null) {
+                locationManager.removeUpdates(locationPendingIntent(context));
+            }
+            if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
+                locationManager.requestLocationUpdates(GPS_PROVIDER, AppConstants.GPS_MIN_TIME, AppConstants.GPS_MIN_DISTANCE, locationPendingIntent(context));
+            if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER))
+                locationManager.requestLocationUpdates(NETWORK_PROVIDER, AppConstants.NETWORK_MIN_TIME, AppConstants.NETWORK_MIN_DISTANCE, locationPendingIntent(context));
+
+        }
+    }
 
     @TargetApi(23)
     private void setSystemSound() {
@@ -310,7 +310,4 @@ public class PanicAlert extends AppCompatActivity{
     ExecutorService getExecutorService() {
         return Executors.newSingleThreadExecutor();
     }
-
-    public static final int MAX_RETRIES = 10;
-    public static final int LOCATION_WAIT_TIME = 1000;
 }
